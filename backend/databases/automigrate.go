@@ -8,7 +8,7 @@ import (
 
 func AutoMigrate() {
 	err := configs.DB.AutoMigrate(
-		&models.Product{},
+		&models.Product{}, &models.User{},
 	)
 	if err != nil {
 		errorLog := fmt.Sprintf("Gagal Auto Migrate: %s", err.Error())
