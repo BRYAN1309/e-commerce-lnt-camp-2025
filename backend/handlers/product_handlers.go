@@ -156,22 +156,3 @@ func UpdateProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, product)
 }
-
-// DELETE /api/products/:id
-func DeleteProduct(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	product, err := repository.GetProductByID(uint(id))
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
-		return
-	}
-	// remove image file if exists
-	if product.ImageURL != nil {
-		_ = os.Remove(*product.ImageURL)
-	}
-	if err := repository.DeleteProduct(product); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete product"})
-		return
-	}
-	c.Status(http.StatusNoContent)
-}

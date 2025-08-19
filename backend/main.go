@@ -3,6 +3,7 @@ package main
 import (
 	"backend/configs"
 	"backend/databases"
+	"backend/databases/seeders"
 	"backend/routes"
 	"log"
 
@@ -17,16 +18,25 @@ func main() {
 	// 1. Setup database connection
 	configs.SetUpDatabase()
 
-	// 2. Run AutoMigrate
+	// 2. Run AutoMigrate FIRST - Create tables before seeding
 	databases.AutoMigrate()
 
-	// 3. Setup Gin
+	// 3. THEN run seeders - Insert data after tables are created
+	seeders.SeederProducts()
+	seeders.SeederUser()
+	seeders.SeedersEmployee()
+
+	// 4. Setup Gin
 	r := gin.Default()
 
-	// 4. Register Routes
+	// 5. Register Routes
 	routes.ProductRoutes(r)
 	routes.AuthRoutes(r)
-	// 5. Start server
+	routes.EmployeeRoutes(r)
+	routes.DashboardRoutes(r)
+	routes.LandingPage(r)
+	routes.Excel(r)
+	// 6. Start server
 	log.Println("🚀 Server running at http://localhost:8080")
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("❌ Failed to start server: ", err)
